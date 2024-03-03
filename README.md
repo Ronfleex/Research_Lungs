@@ -16,7 +16,9 @@ To see how the project is evolving, I divide the code into several sections so t
 - **EulerImplicit_NS** : The idea is to work on the Splitting method (ImplicitEuler) on Navier_Stokes.
 - **EulerImplicit_Total** : The idea is to work on the splitting method via ImplicitEuler with the final formula written in the paper.
 - **EulerImplicit_Total_Comparative**: The idea is to work on the splitting method via ImplicitEuler with the final formula, testing several cases in order to keep the most optimal one.
-- **Lung_2D**: The idea is to be able to mesh the Lung on FreeFEM++.
+- **Lung_2D_V1**: The idea is to be able to mesh the Lung on FreeFEM++.
+- **Lung_2D_V2**: The idea is to be able to mesh the Lung on FreeFEM++.
+- **Lung_2D_V3**: The idea is to be able to mesh the Lung on FreeFEM++.
 - **Lung_2D_NS** : The idea is to be able to mesh the Lung on FreeFEM++ with Navier-Stokes.
 - **Lung_2D_NS_Expiration/Inspiration** : The idea is to be able to mesh the Lung on FreeFEM++ with Navier-Stokes and to add to the code the breathing cycle as in reality. 
 - **NS+EulerImplicit+Lung combination** : The idea is to be able to simulate in a lung filled with air with all the previous constraints.
