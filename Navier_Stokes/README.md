@@ -1,3 +1,9 @@
-Pour comprendre comment fonctionne le code et les différents cas de figure, j'ai 
+Le code est codé en C++ via FreeFEM++. Il comprend la solution de Navier-Stokes avec des particularités afin de comprendre comment l'écoulement de l'air se fait dans un carré avec les conditions aux bords au préalable définis.
 
-![image](https://github.com/Ronfleex/Research_Lungs/assets/129523736/ed77da34-ae61-455d-bab9-41c0581724bd)
+Pour mieux comprendre comment cela fonctionne, nous avons travaillé sur différents cas de figure que nous visualiserons par la suite grâce à Paraview. 
+
+| Colonne 1 | Colonne 2 | Colonne 3 |
+| --------- | --------- | --------- |
+| Ligne 1, Cellule 1 | Ligne 1, Cellule 2 | Ligne 1, Cellule 3 |
+| Ligne 2, Cellule 1 | Ligne 2, Cellule 2 | Ligne 2, Cellule 3 |
+| Ligne 3, Cellule 1 | Ligne 3, Cellule 2 | Ligne 3, Cellule 3 |
