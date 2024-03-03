@@ -1,0 +1,105 @@
+// -*- C++ -*-                                                                                                                                                                  
+
+load "iovtk"
+int[int] fforder2 =[1,1,1]; //type pour un tableau d'entiers
+
+// load "UMFPACK64"
+//load "msh3"
+load "medit"
+
+int N = 10000; // Nombres d'itérations
+int Tolerance = 1.e-6;
+real dt = 1e-1; // pas de temps  
+int meshSize = 50;
+
+mesh Th = square(meshSize,meshSize); //mesh de taille carrée 
+
+// Th : maillage triangulaire sur lequel les espaces de fonctions sont définis
+
+// plot(Th); exit(0);
+
+fespace Vh(Th,P2);   // Espace des vitesses d'éléments finis sur un maillage donné (plus précis par P2 :quadratiques)
+fespace Mh(Th,P1);   // Espace des pressions d'éléments finis sur un maillage donné (moins précis par P1 : linéaires)
+
+Vh u1,u2, u1p,u2p ,v1,v2;  // Declaration des composantes des vitesses et des fonctions tests
+Mh p,pp,q;                 // Declaration de la pression et de la fonction test q 
+
+
+real  Reynolds = 100;             // Reynolds 
+real  nu = 1./Reynolds;       // Viscosite dynamique 
+real  U0 = 1 ;               // Valeur imposée sur le bord haut du carrée     
+
+
+// Nombre d'iteration maximale et declaration des erreurs 
+
+real Err, errP,errU;
+
+// Boucle en temps pour l'algorithme de résolution Euler (ordre 1 en temps)
+
+real t ;
+
+u1 = 0.; u2=0.; p =0.;
+
+ofstream gnu("Erreur_Cavite2D_Reynolds="+Reynolds+".txt");
+
+
+for(int i=0;i<=N;i++)
+{ 
+    t = i*dt;
+    
+  u1p =u1; u2p =u2; pp=p;
+    
+    solve NS([u1,u2,p],[v1,v2,q]) =
+    
+     int2d(Th)(  (u1*v1  + u2*v2)/dt)   
+   - int2d(Th)(  (u1p*v1 + u2p*v2)/dt)   
+
+   + int2d(Th)( nu*(2*dx(u1)*dx(v1) + 2*dy(u2)*dy(v2)  +
+                    dy(u1)*dy(v1)   + dx(u2)*dx(v2)  +
+                    dx(u2)*dy(v1)   + dy(u1)*dx(v2))
+              )
+
+   + int2d(Th)(   ( u1p*dx(u1) + u2p*dy(u1) )* v1 
+                 +( u1p*dx(u2) + u2p*dy(u2) )* v2 )
+
+   - int2d(Th)(p*(dx(v1)+ dy(v2)) + q*(dx(u1)+ dy(u2)) - 1e-7*p*q  )
+
+    + on(3,2,u2= U0) + on(1,4,u2=0)
+    + on(1,2,3,4,u1=0)
+    ;  
+
+    errU = sqrt(int2d(Th)(square(u1-u1p)+ square(u2-u2p))) ;
+    errP = sqrt(int2d(Th)(square(p-pp))) ;
+    Err = sqrt(errP^2+errU^2);
+            
+// Stockage dans un tableau des valeurs des erreurs
+
+gnu << t
+            << "       " << errU
+            << "       " << errP 
+            << "       " << Err
+            << endl;
+
+gnu.flush;
+    
+   
+cout << " Affichage *************.  iter " << i <<   "    Reynolds === " << Reynolds <<     "   Err L2 = " << Err <<  "    " << errU << "  " << errP << endl;
+
+// Sauvegarde de la solution toute les 10 pas de temps
+   
+    if(i%10 ==0){
+    savevtk("Sol_Cavite2D_Reynolds="+Reynolds+"_"+i+".vtu", Th, p, [u1,u2,0],
+            order = fforder2, dataname ="Pression Vitesse", bin = true );
+    }
+
+// Test d'arret des que l'erreur est < a la tolerance donneée
+
+ if(Err < Tolerance){
+cout << " ****************** La convergnce est atteinte et donc  on arrete le calcul a Tfinle ==  **************** " << t << endl;        
+
+savevtk("SolFinale_Cavite2D_Reynolds="+Reynolds+".vtu",Th, p, [u1,u2,0],
+            order = fforder2, dataname ="P V", bin = true ); 
+break; 
+}    
+}
+
