@@ -1,0 +1,216 @@
+// -*- c++ -*-
+
+//label des frontières: en haut (entrée bouche) c'est 0, sur tous les cotés c'est 20, 
+// en bas de gauche à  droite sorties numerote de 1 à 4 
+
+real MM=6.; // nombre minimum de maille sur les sorties.
+
+real D0 = .018;  // diameter of the trachea
+real l0 = .12;  // length of the trachea
+real th11 = pi/4; // angles pour les branches de la bifurcation
+real th12 = pi/4; // angles pour les branches de la bifurcation
+real lambda3D = 0.85; // géométrie en 3D
+real lambda2D = lambda3D^(1.5); // géométrie en 2D
+real l11 = lambda2D*l0; // longueurs des branches de la première génération de la bifurcation
+real l12 = lambda2D*l0; // longueurs des branches de la première génération de la bifurcation
+real al = .5; // coefficients utilisés pour calculer les diamètres des branches.
+
+//real beta =0.015;
+// coefficients utilisés pour calculer les diamètres des branches.
+real beta  =.03;
+real beta1 =.03;
+real beta2 =.03;
+
+//diamètres des branches de la première génération.
+real D11 = (tan(th11)*beta*l0/D0+al)*D0*cos(th11); 
+real D12 = (tan(th12)*beta*l0/D0+(1-al))*D0*cos(th12);
+
+//2eme generation
+
+//real beta1 =.015;
+real al1 =.5;
+real l21 = lambda2D*l11;
+real l22 = lambda2D*l11;
+real th21 = pi/4;
+real th22 = pi/4;
+real D21 = (tan(th21)*beta1*l11/D11+al1)*D11*cos(th21);
+real D22 = (tan(th22)*beta1*l11/D11+(1-al1))*D11*cos(th22);
+
+//real beta2 =.015;
+real al2 =.5;
+real l23 = lambda2D*l12;
+real l24 = lambda2D*l12;
+real th23 = pi/4;
+real th24 = pi/4;
+real D23 = (tan(th23)*beta2*l12/D12+al2)*D12*cos(th23);
+real D24 = (tan(th24)*beta2*l12/D12+(1-al2))*D12*cos(th24);
+
+
+int  DM    = 500;            //densite du maillage
+
+// Construction du maillage
+
+func real rot1x(real x,real y, real th11, real l11)
+{ return cos(th11)*x+sin(th11)*y -l11*sin(th11); }
+
+func real rot1y(real x,real y, real th11, real l11, real l0)
+{ return -sin(th11)*x+cos(th11)*y -l0-l11*cos(th11); }
+
+func real rot2x(real x,real y, real th12, real l12, real D12, real D0)
+{ return cos(th12)*x-sin(th12)*y +l12*sin(th12) -cos(th12)*D12+D0; }
+
+func real rot2y(real x,real y, real th12, real l12, real D12, real l0)
+{ return sin(th12)*x+cos(th12)*y -l0-l12*cos(th12)-D12*sin(th12); }
+
+func real f3(real t, real th11)
+{return -tan(th11)*t;}
+
+func real f4(real t, real th11, real l11)
+{return (1/tan(th11))*(t - l11*cos(th11)) -l11*sin(th11);}
+
+func real f5(real t, real th11, real l11, real D11)
+{return -tan(th11)*(t-D11*sin(th11))+D11*cos(th11);}
+
+func real f6(real t, real th12, real D12, real D0)
+{return tan(th12)*(t-D12*sin(th12))-D12*cos(th12) +D0;}
+
+func real f7(real t, real th12, real l12, real D0)
+{return -(1/tan(th12))*(t-l12*cos(th12))+l12*sin(th12)+D0;}
+
+func real f8(real t, real th12, real D0)
+{return tan(th12)*t+D0;}
+
+/*
+  Le cylindre est construit des border a,b et c
+  Cette partie ne change pas meme si on change de generation
+*/
+
+border a(t=0,D0) {x = D0-t; y=0 ; label=0;};  // sortie 0 ou entree= la bouche
+border b(t=0,l0) {x=0;y = -(t); label = 20;};  // bord lateral
+border c(t=l0,l0+l11*cos(th11)) {x=f3(t-l0,th11);y=-t;label=20 ;}; // bord lateral 
+
+/* Fin du cylindre */
+border d(t=l0+l11*cos(th11),D11*sin(th11)+l0+l11*cos(th11)) {x=f4(t-l0,th11,l11);y=-t;label=1;}; // Sortie num 1
+border e(t=D11*sin(th11)+l0+l11*cos(th11),l0+beta*l0) {x=f5(t-l0,th11,l11,D11);y=-t;label=20;}; // Bord lateral
+border f(t=l0+beta*l0,D12*sin(th12)+l0+l12*cos(th12)) {x=f6(t-l0,th12,D12,D0);y=-t;label=20;}; // Bord lateral
+border g(t=D12*sin(th12)+l0+l12*cos(th12),l0+l12*cos(th12)) {x=f7(t-l0,th12,l12,D0);y=-t;label=2;}; // Sortie num 2
+border h(t=l0+l12*cos(th12),l0) {x=f8(t-l0,th12,D0);y=-t;label=20;}; // Bord lateral
+border j(t=l0,0) {x=D0;y=-(t);label=20;}; // bord lateral
+
+
+mesh Th=buildmesh (a(D0*DM*2)+b(l0*DM)+c(l11*DM)+ d(D11*DM)
+                        +e(l11*DM)+f(l12*DM)+
+                  g(D12*DM) +h(l12*DM)+j(l0*DM));
+
+// adaptation du maillage
+
+real taillemax=0.0017;
+real taille=0.0005;
+//real taillemax=0.0035;
+//real taille=0.001;
+//Th=adaptmesh(Th,1/(taille*taille),0,1/(taille*taille),hmax=taillemax);
+// Th=adaptmesh(Th,0.001,IsMetric=1,hmin=taille,hmax=taillemax);  pour un maillage plus fin et plus regulier ???
+
+plot(Th,wait=1);  // pour afficher maillage
+
+// sauvegarde du maillage en format Medit
+savemesh(Th,"bifurcation_1g.mesh");
+
+load "iovtk"
+int[int] fforder2 =[1,1,1];
+
+// load "UMFPACK64"
+//load "msh3"
+load "medit"
+
+int N = 10000;
+int Tolerance = 1.e-6;
+real dt = 1e-3; // pas de temps  
+
+// plot(Th); exit(0);
+
+fespace Vh(Th,P2);   // Espace des vitesses d'éléments finis sur un maillage donné (plus précis par P2 :quadratiques)
+fespace Mh(Th,P1);   // Espace des pressions d'éléments finis sur un maillage donné (moins précis par P1 : linéaires)
+
+Vh u1,u2, u1p,u2p ,v1,v2;   // Declaration des composantes des vitesses et des fonctions tests
+Mh p,pp,q;                  // Declaration de la pression et de la fonction test q 
+
+
+real  Reynolds = 100;         // Reynolds 
+real  nu = 1./Reynolds;       // Viscosite dynamique 
+real  U0 = -1. ;              // Valeur imposée sur le bord haut du carrée     
+
+
+// Nombre d'iteration maximale et declaration des erreurs 
+
+real Err, errP,errU;
+
+// Boucle en temps pour l'algorithme de résolution Euler (ordre 1 en temps)
+
+real t ;
+
+u1 = 0.; u2=0.; p =0.;
+
+ofstream gnu("Erreur_Cavite2D_Reynolds="+Reynolds+".txt");
+
+
+for(int i=0;i<=N;i++)
+{ 
+    t = i*dt;
+    
+    u1p =u1; u2p =u2; pp=p;
+    
+    solve NS([u1,u2,p],[v1,v2,q]) =
+    
+     int2d(Th)(  (u1*v1  + u2*v2)/dt)   
+   - int2d(Th)(  (u1p*v1 + u2p*v2)/dt)   
+
+   + int2d(Th)( nu*(2*dx(u1)*dx(v1) + 2*dy(u2)*dy(v2)  +
+                    dy(u1)*dy(v1)   + dx(u2)*dx(v2)  +
+                    dx(u2)*dy(v1)   + dy(u1)*dx(v2))
+              )
+
+   + int2d(Th)(   ( u1p*dx(u1) + u2p*dy(u1) )* v1 
+                 +( u1p*dx(u2) + u2p*dy(u2) )* v2 )
+
+   - int2d(Th)(p*(dx(v1)+ dy(v2)) + q*(dx(u1)+ dy(u2)) - 1e-7*p*q  )
+
+    + on(0, u2=U0, u1=0) // Downward air inflow at the top boundary (mouth)
+    + on(20, u2=0, u1=0)
+    ;  
+
+    errU = sqrt(int2d(Th)(square(u1-u1p)+ square(u2-u2p))) ;
+    errP = sqrt(int2d(Th)(square(p-pp))) ;
+    Err = sqrt(errP^2+errU^2);
+            
+// Stockage dans un tableau des valeurs des erreurs
+gnu << t
+            << "       " << dt
+            << "       " << Reynolds
+            << "       " << Err
+            << "       " << errU
+            << "       " << errP
+            << endl;
+
+gnu.flush;
+    
+   
+cout << " Affichage ****  iter " << i <<  " |  Pas de temps === " << dt <<  "  | Reynolds === " << Reynolds <<     "  |  ErrTotal  = " << Err <<  "  | ErrU =   " << errU << " | ErrP =   " << errP << endl;
+
+// Sauvegarde de la solution toute les 10 pas de temps
+   
+    if(i%10 ==0){
+    savevtk("Sol_Cavite2D_Reynolds="+Reynolds+"_"+i+".vtu", Th, p, [u1,u2,0],
+            order = fforder2, dataname ="Pression Vitesse", bin = true );
+    }
+
+// Test d'arret des que l'erreur est < a une tolerance 
+
+ if(Err < Tolerance){
+cout << " ****************** La convergnce est atteinte et donc  on arrete le calcul a Tfinle ==  **************** " << t << endl;        
+
+savevtk("SolFinale_Cavite2D_Reynolds="+Reynolds+".vtu",Th, p, [u1,u2,0],
+            order = fforder2, dataname ="P V", bin = true ); 
+break; 
+}    
+}
