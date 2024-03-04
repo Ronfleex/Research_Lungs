@@ -13,7 +13,10 @@ Pour les conditions aux limites, nous travaillons avec types de bords différent
 - Label 2 : Sortie numéro 2
 - Label 3 : Sortie numéro 3
 - Label 4 : Sortie numéro 4 
-- Label 20 : tout les bords latérals 
+- Label 20 : tout les bords latérals
+
+![image](https://github.com/Ronfleex/Research_Lungs/assets/129523736/2e5982e2-0042-4e6b-9cd4-7116aafc21c4)
+
 
 ## Utilisation
 
