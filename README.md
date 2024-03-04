@@ -19,7 +19,7 @@ To see how the project is evolving, I divide the code into several sections so t
 - **Lung_2D_V1**: The idea is to be able to mesh the Lung on FreeFEM++.
 - **Lung_2D_V2**: The idea is to be able to mesh the Lung on FreeFEM++.
 - **Lung_2D_V3**: The idea is to be able to mesh the Lung on FreeFEM++.
-- **Lung_2D_NS** : The idea is to be able to mesh the Lung on FreeFEM++ with Navier-Stokes.
+- **Lung_2D_V4**: The idea is to be able to mesh the Lung on FreeFEM++.
 - **Lung_2D_NS_Expiration/Inspiration** : The idea is to be able to mesh the Lung on FreeFEM++ with Navier-Stokes and to add to the code the breathing cycle as in reality. 
 - **NS+EulerImplicit+Lung combination** : The idea is to be able to simulate in a lung filled with air with all the previous constraints.
 - **Temperature effect**: The idea is to add the temperature effect to the formula/simulation. 
