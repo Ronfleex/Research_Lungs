@@ -14,7 +14,7 @@ Pour les conditions aux limites, nous travaillons avec types de bords différent
 - Label 2 : Sortie numéro 2
 - Label 20 : tout les bords latérals 
 
-![image](https://github.com/Ronfleex/Research_Lungs/assets/129523736/84706fa0-6752-4d1b-aae5-425e7156ea9b)
+![image](https://github.com/Ronfleex/Research_Lungs/assets/129523736/cb670805-e468-47b1-8a82-a470d0b1fa22)
 
 ## Utilisation
 
