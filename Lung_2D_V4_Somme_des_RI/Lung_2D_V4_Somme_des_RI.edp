@@ -1,0 +1,812 @@
+// -*- c++ -*-
+load "iovtk"
+
+int[int] fforder2 =[1,1,1,1,1,1,1,1];
+int  DM    = 1000;    //densite du maillage
+//{ // Definition des grandeurs physiques
+real th11 = pi/4; // angles a choisir inferieurs a pi/2
+real th12 = pi/4;
+real lambda3D = 0.85;
+real lambda2D = lambda3D^(1.5);
+real D0 = 0.018; // diametre de depart de l'arbre a la generation 1
+real l0 = 0.12; // longueur de depart de l'arbre a la generation 1
+real l11 = lambda2D*l0;
+real l12 = lambda2D*l0;
+real D11 = lambda2D*D0;
+real D12 = lambda2D*D0;
+real beta =(cos(th12)*D11 + cos(th11)*D12 - D0*cos(th11)*cos(th12))/(sin(th11+th12)*l0);
+real al = (sin(th12)*D11 - sin(th11)*D12 + D0*sin(th11)*cos(th12))/(sin(th11+th12)*D0);
+
+//2eme generation
+
+real l21 = lambda2D*l11; real l22 = lambda2D*l11;
+real th21 = pi/4; real th22 = pi/4;
+real D21 = lambda2D*D11;
+real D22 = lambda2D*D11;
+real beta1 =(cos(th22)*D21 + cos(th21)*D22 - D11*cos(th21)*cos(th22))/(sin(th21+th22)*l11);
+real al1 = (sin(th22)*D21 - sin(th21)*D22 + D11*sin(th21)*cos(th22))/(sin(th21+th22)*D11);
+
+real l23 = lambda2D*l12; real l24 = lambda2D*l12;
+real th23 = pi/4; real th24 = pi/4;
+real D23 = lambda2D*D12;
+real D24 = lambda2D*D12;
+real beta2 =(cos(th24)*D23 + cos(th23)*D24 - D12*cos(th23)*cos(th24))/(sin(th23+th24)*l12);
+real al2 = (sin(th24)*D23 - sin(th23)*D24 + D12*sin(th23)*cos(th24))/(sin(th23+th24)*D12);
+
+//3eme generation
+
+real l31 = lambda2D*l21; real l32 = lambda2D*l21;
+real th31 = pi/8; real th32 = pi/8;
+real D31 = lambda2D*D21;
+real D32 = lambda2D*D21;
+real beta21 =(cos(th32)*D31 + cos(th31)*D32 - D21*cos(th31)*cos(th32))/(sin(th31+th32)*l21);
+real al21 = (sin(th32)*D31 - sin(th31)*D32 + D21*sin(th31)*cos(th32))/(sin(th31+th32)*D21);
+
+real l33 = lambda2D*l22; real l34 = lambda2D*l22;
+real th33 = pi/8; real th34 = pi/8;
+real D33 = lambda2D*D22;
+real D34 = lambda2D*D22;
+real beta22 =(cos(th34)*D33 + cos(th33)*D34 - D22*cos(th33)*cos(th34))/(sin(th33+th34)*l22);
+real al22 = (sin(th34)*D33 - sin(th33)*D34 + D22*sin(th33)*cos(th34))/(sin(th33+th34)*D22);
+
+real l35 = lambda2D*l23; real l36 = lambda2D*l23;
+real th35 = pi/8; real th36 = pi/8;
+real D35 = lambda2D*D23;
+real D36 = lambda2D*D23;
+real beta23 =(cos(th36)*D35 + cos(th35)*D36 - D23*cos(th35)*cos(th36))/(sin(th35+th36)*l23);
+real al23 = (sin(th36)*D35 - sin(th35)*D36 + D23*sin(th35)*cos(th36))/(sin(th35+th36)*D23);
+
+real l37 = lambda2D*l24; real l38 = lambda2D*l24;
+real th37 = pi/8; real th38 = pi/8;
+real D37 = lambda2D*D24;
+real D38 = lambda2D*D24;
+real beta24 =(cos(th38)*D37 + cos(th37)*D38 - D24*cos(th37)*cos(th38))/(sin(th37+th38)*l24);
+real al24 = (sin(th38)*D37 - sin(th37)*D38 + D24*sin(th37)*cos(th38))/(sin(th37+th38)*D24);
+
+// 4eme generation
+
+real l41 = lambda2D*l31; real l42 = lambda2D*l31;
+real th41 = pi/16; real th42 = pi/16;
+real D41 = lambda2D*D31;
+real D42 = lambda2D*D31;
+real beta31 =(cos(th42)*D41 + cos(th41)*D42 - D31*cos(th41)*cos(th42))/(sin(th41+th42)*l31);
+real al31 = (sin(th42)*D41 - sin(th41)*D42 + D31*sin(th41)*cos(th42))/(sin(th41+th42)*D31);
+
+real l43 = lambda2D*l32; real l44 = lambda2D*l32;
+real th43 = pi/16; real th44 = pi/16;
+real D43 = lambda2D*D32;
+real D44 = lambda2D*D32;
+real beta32 =(cos(th44)*D43 + cos(th43)*D44 - D32*cos(th43)*cos(th44))/(sin(th43+th44)*l32);
+real al32 = (sin(th44)*D43 - sin(th43)*D44 + D32*sin(th43)*cos(th44))/(sin(th43+th44)*D32);
+
+real l45 = lambda2D*l33; real l46 = lambda2D*l33;
+real th45 = pi/16; real th46 = pi/16;
+real D45 = lambda2D*D33;
+real D46 = lambda2D*D33;
+real beta33 =(cos(th46)*D45 + cos(th45)*D46 - D33*cos(th45)*cos(th46))/(sin(th45+th46)*l33);
+real al33 = (sin(th46)*D45 - sin(th45)*D46 + D33*sin(th45)*cos(th46))/(sin(th45+th46)*D33);
+
+real l47 = lambda2D*l34; real l48 = lambda2D*l34;
+real th47 = pi/16; real th48 = pi/16;
+real D47 = lambda2D*D34;
+real D48 = lambda2D*D34;
+real beta34 =(cos(th48)*D47 + cos(th47)*D48 - D34*cos(th47)*cos(th48))/(sin(th47+th48)*l34);
+real al34 = (sin(th48)*D47 - sin(th47)*D48 + D34*sin(th47)*cos(th48))/(sin(th47+th48)*D34);
+
+real l49 = lambda2D*l35; real l410 = lambda2D*l35;
+real th49 = pi/16; real th410 = pi/16;
+real D49 = lambda2D*D35;
+real D410 = lambda2D*D35;
+real beta35 =(cos(th410)*D49 + cos(th49)*D410 - D35*cos(th49)*cos(th410))/(sin(th49+th410)*l35);
+real al35 = (sin(th410)*D49 - sin(th49)*D410 + D35*sin(th49)*cos(th410))/(sin(th49+th410)*D35);
+
+real l411 = lambda2D*l36; real l412 = lambda2D*l36;
+real th411 = pi/16; real th412 = pi/16;
+real D411 = lambda2D*D36;
+real D412 = lambda2D*D36;
+real beta36 =(cos(th412)*D411 + cos(th411)*D412 - D36*cos(th411)*cos(th412))/(sin(th411+th412)*l36);
+real al36 = (sin(th412)*D411 - sin(th411)*D412 + D36*sin(th411)*cos(th412))/(sin(th411+th412)*D36);
+
+real l413 = lambda2D*l37; real l414 = lambda2D*l37;
+real th413 = pi/16; real th414 = pi/16;
+real D413 = lambda2D*D37;
+real D414 = lambda2D*D37;
+real beta37 =(cos(th414)*D413 + cos(th413)*D414 - D37*cos(th413)*cos(th414))/(sin(th413+th414)*l37);
+real al37 = (sin(th414)*D413 - sin(th413)*D414 + D37*sin(th413)*cos(th414))/(sin(th413+th414)*D37);
+
+real l415 = lambda2D*l38; real l416 = lambda2D*l38;
+real th415 = pi/16; real th416 = pi/16;
+real D415 = lambda2D*D38;
+real D416 = lambda2D*D38;
+real beta38 =(cos(th416)*D415 + cos(th415)*D416 - D38*cos(th415)*cos(th416))/(sin(th415+th416)*l38);
+real al38 = (sin(th416)*D415 - sin(th415)*D416 + D38*sin(th415)*cos(th416))/(sin(th415+th416)*D38);
+
+
+
+
+
+
+// Construction du maillage
+
+func real rot1x(real x,real y, real th11, real l11)
+{ return cos(th11)*x+sin(th11)*y -l11*sin(th11); }
+
+func real rot1y(real x,real y, real th11, real l11, real l0)
+{ return -sin(th11)*x+cos(th11)*y -l0-l11*cos(th11); }
+
+func real rot2x(real x,real y, real th12, real l12, real D12, real D0)
+{ return cos(th12)*x-sin(th12)*y +l12*sin(th12) -cos(th12)*D12+D0; }
+
+func real rot2y(real x,real y, real th12, real l12, real D12, real l0)
+{ return sin(th12)*x+cos(th12)*y -l0-l12*cos(th12)-D12*sin(th12); }
+
+func real f3(real t, real th11)
+{return -tan(th11)*t;}
+
+func real f4(real t, real th11, real l11)
+{return (1/tan(th11))*(t - l11*cos(th11)) -l11*sin(th11);}
+
+func real f5(real t, real th11, real l11, real D11)
+{return -tan(th11)*(t-D11*sin(th11))+D11*cos(th11);}
+
+func real f6(real t, real th12, real D12, real D0)
+{return tan(th12)*(t-D12*sin(th12))-D12*cos(th12) +D0;}
+
+func real f7(real t, real th12, real l12, real D0)
+{return -(1/tan(th12))*(t-l12*cos(th12))+l12*sin(th12)+D0;}
+
+func real f8(real t, real th12, real D0)
+{return tan(th12)*t+D0;}
+
+
+border a(t=0,D0) {x=D0-t;y=0;label=0;};
+border b(t=0,l0) {x=0;y=-t;label=20;};
+border c(t=l0,l0+l11*cos(th11)) {x=f3(t-l0,th11);y=-t;label=20;};
+border d(t=l0+l11*cos(th11),D11*sin(th11)+l0+l11*cos(th11)) {x=f4(t-l0,th11,l11);y=-t;label=3;};
+border e(t=D11*sin(th11)+l0+l11*cos(th11),l0+beta*l0) {x=f5(t-l0,th11,l11,D11);y=-t;label=20;};
+border f(t=l0+beta*l0,D12*sin(th12)+l0+l12*cos(th12)) {x=f6(t-l0,th12,D12,D0);y=-t;label=20;};
+border g(t=D12*sin(th12)+l0+l12*cos(th12),l0+l12*cos(th12)) {x=f7(t-l0,th12,l12,D0);y=-t;label=3;};
+border h(t=l0+l12*cos(th12),l0) {x=f8(t-l0,th12,D0);y=-t;label=20;};
+border j(t=l0,0) {x=D0;y=-t;label=20;};
+border z(t=0,D0) {x=t;y=-l0;label=3;};
+
+//2eme generation
+
+border kc(t=0,l21*cos(th21)) {x=rot1x(f3(t,th21),-t,th11,l11);y=rot1y(f3(t,th21),-t,th11,l11,l0);label=20;};
+border kd(t=l21*cos(th21),D21*sin(th21)+l21*cos(th21)) {x=rot1x(f4(t,th21,l21),-t,th11,l11);y=rot1y(f4(t,th21,l21),-t,th11,l11,l0);label=3;};
+border ke(t=D21*sin(th21)+l21*cos(th21),beta1*l11) {x=rot1x(f5(t,th21,l21,D21),-t,th11,l11);y=rot1y(f5(t,th21,l21,D21),-t,th11,l11,l0);label=20;};
+border kf(t=beta1*l11,D22*sin(th22)+l22*cos(th22)) {x=rot1x(f6(t,th22,D22,D11),-t,th11,l11);y=rot1y(f6(t,th22,D22,D11),-t,th11,l11,l0);label=20;};
+border kg(t=D22*sin(th22)+l22*cos(th22),l22*cos(th22)) {x=rot1x(f7(t,th22,l22,D11),-t,th11,l11);y=rot1y(f7(t,th22,l22,D11),-t,th11,l11,l0);label=3;};
+border kh(t=l22*cos(th22),0) {x=rot1x(f8(t,th22,D11),-t,th11,l11);y=rot1y(f8(t,th22,D11),-t,th11,l11,l0);label=20;};
+
+border lc(t=0,l23*cos(th23)) {x=rot2x(f3(t,th23),-t,th12,l12,D12,D0);y=rot2y(f3(t,th23),-t,th12,l12,D12,l0);label=20;};
+border ld(t=l23*cos(th23),D23*sin(th23)+l23*cos(th23)) {x=rot2x(f4(t,th23,l23),-t,th12,l12,D12,D0);y=rot2y(f4(t,th23,l23),-t,th12,l12,D12,l0);label=3;};
+border le(t=D23*sin(th23)+l23*cos(th23),beta2*l12) {x=rot2x(f5(t,th23,l23,D23),-t,th12,l12,D12,D0);y=rot2y(f5(t,th23,l23,D23),-t,th12,l12,D12,l0);label=20;};
+border lf(t=beta2*l12,D24*sin(th24)+l24*cos(th24)) {x=rot2x(f6(t,th24,D24,D12),-t,th12,l12,D12,D0);y=rot2y(f6(t,th24,D24,D12),-t,th12,l12,D12,l0);label=20;};
+border lg(t=D24*sin(th24)+l24*cos(th24),l24*cos(th24)) {x=rot2x(f7(t,th24,l24,D12),-t,th12,l12,D12,D0);y=rot2y(f7(t,th24,l24,D12),-t,th12,l12,D12,l0);label=3;};
+border lh(t=l24*cos(th24),0) {x=rot2x(f8(t,th24,D12),-t,th12,l12,D12,D0);y=rot2y(f8(t,th24,D12),-t,th12,l12,D12,l0);label=20;};
+
+//3eme generation
+
+border mc(t=0,l31*cos(th31))
+{x=rot1x(rot1x(f3(t,th31),-t,th21,l21),rot1y(f3(t,th31),-t,th21,l21,0),th11,l11);
+y=rot1y(rot1x(f3(t,th31),-t,th21,l21),rot1y(f3(t,th31),-t,th21,l21,0),th11,l11,l0);label=20;};
+
+border md(t=l31*cos(th31),D31*sin(th31)+l31*cos(th31))
+{x=rot1x(rot1x(f4(t,th31,l31),-t,th21,l21),rot1y(f4(t,th31,l31),-t,th21,l21,0),th11,l11);
+y=rot1y(rot1x(f4(t,th31,l31),-t,th21,l21),rot1y(f4(t,th31,l31),-t,th21,l21,0),th11,l11,l0);label=3;};
+
+border me(t=D31*sin(th31)+l31*cos(th31),beta21*l21)
+{x=rot1x(rot1x(f5(t,th31,l31,D31),-t,th21,l21),rot1y(f5(t,th31,l31,D31),-t,th21,l21,0),th11,l11);
+y=rot1y(rot1x(f5(t,th31,l31,D31),-t,th21,l21),rot1y(f5(t,th31,l31,D31),-t,th21,l21,0),th11,l11,l0);label=20;};
+
+border mf(t=beta21*l21,D32*sin(th32)+l32*cos(th32))
+{x=rot1x(rot1x(f6(t,th32,D32,D21),-t,th21,l21),rot1y(f6(t,th32,D32,D21),-t,th21,l21,0),th11,l11);
+y=rot1y(rot1x(f6(t,th32,D32,D21),-t,th21,l21),rot1y(f6(t,th32,D32,D21),-t,th21,l21,0),th11,l11,l0);label=20;};
+
+border mg(t=D32*sin(th32)+l32*cos(th32),l32*cos(th32))
+{x=rot1x(rot1x(f7(t,th32,l32,D21),-t,th21,l21),rot1y(f7(t,th32,l32,D21),-t,th21,l21,0),th11,l11);
+y=rot1y(rot1x(f7(t,th32,l32,D21),-t,th21,l21),rot1y(f7(t,th32,l32,D21),-t,th21,l21,0),th11,l11,l0);label=3;};
+
+border mh(t=l32*cos(th32),0)
+{x=rot1x(rot1x(f8(t,th32,D21),-t,th21,l21),rot1y(f8(t,th32,D21),-t,th21,l21,0),th11,l11);
+y=rot1y(rot1x(f8(t,th32,D21),-t,th21,l21),rot1y(f8(t,th32,D21),-t,th21,l21,0),th11,l11,l0);label=20;};
+
+border nc(t=0,l33*cos(th33))
+{x=rot1x(rot2x(f3(t,th33),-t,th22,l22,D22,D11),rot2y(f3(t,th33),-t,th22,l22,D22,0),th11,l11);
+y=rot1y(rot2x(f3(t,th33),-t,th22,l22,D22,D11),rot2y(f3(t,th33),-t,th22,l22,D22,0),th11,l11,l0);label=20;};
+
+border nd(t=l33*cos(th33),D33*sin(th33)+l33*cos(th33))
+{x=rot1x(rot2x(f4(t,th33,l33),-t,th22,l22,D22,D11),rot2y(f4(t,th33,l33),-t,th22,l22,D22,0),th11,l11);
+y=rot1y(rot2x(f4(t,th33,l33),-t,th22,l22,D22,D11),rot2y(f4(t,th33,l33),-t,th22,l22,D22,0),th11,l11,l0);label=3;};
+
+border ne(t=D33*sin(th33)+l33*cos(th33),beta22*l22)
+{x=rot1x(rot2x(f5(t,th33,l33,D33),-t,th22,l22,D22,D11),rot2y(f5(t,th33,l33,D33),-t,th22,l22,D22,0),th11,l11);
+y=rot1y(rot2x(f5(t,th33,l33,D33),-t,th22,l22,D22,D11),rot2y(f5(t,th33,l33,D33),-t,th22,l22,D22,0),th11,l11,l0);label=20;};
+
+border nf(t=beta21*l22,D34*sin(th34)+l34*cos(th34))
+{x=rot1x(rot2x(f6(t,th34,D34,D22),-t,th22,l22,D22,D11),rot2y(f6(t,th34,D34,D22),-t,th22,l22,D22,0),th11,l11);
+y=rot1y(rot2x(f6(t,th34,D34,D22),-t,th22,l22,D22,D11),rot2y(f6(t,th34,D34,D22),-t,th22,l22,D22,0),th11,l11,l0);label=20;};
+
+border ng(t=D34*sin(th34)+l34*cos(th34),l34*cos(th34))
+{x=rot1x(rot2x(f7(t,th34,l34,D22),-t,th22,l22,D22,D11),rot2y(f7(t,th34,l34,D22),-t,th22,l22,D22,0),th11,l11);
+y=rot1y(rot2x(f7(t,th34,l34,D22),-t,th22,l22,D22,D11),rot2y(f7(t,th34,l34,D22),-t,th22,l22,D22,0),th11,l11,l0);label=3;};
+
+border nh(t=l34*cos(th34),0)
+{x=rot1x(rot2x(f8(t,th34,D22),-t,th22,l22,D22,D11),rot2y(f8(t,th34,D22),-t,th22,l22,D22,0),th11,l11);
+y=rot1y(rot2x(f8(t,th34,D22),-t,th22,l22,D22,D11),rot2y(f8(t,th34,D22),-t,th22,l22,D22,0),th11,l11,l0);label=20;};
+
+border oc(t=0,l35*cos(th35))
+{x=rot2x(rot1x(f3(t,th35),-t,th23,l23),rot1y(f3(t,th35),-t,th23,l23,0),th12,l12,D12,D0);
+y=rot2y(rot1x(f3(t,th35),-t,th23,l23),rot1y(f3(t,th35),-t,th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border od(t=l35*cos(th35),D35*sin(th35)+l35*cos(th35))
+{x=rot2x(rot1x(f4(t,th35,l35),-t,th23,l23),rot1y(f4(t,th35,l35),-t,th23,l23,0),th12,l12,D12,D0);
+y=rot2y(rot1x(f4(t,th35,l35),-t,th23,l23),rot1y(f4(t,th35,l35),-t,th23,l23,0),th12,l12,D12,l0);label=3;};
+
+border oe(t=D35*sin(th35)+l35*cos(th35),beta23*l23)
+{x=rot2x(rot1x(f5(t,th35,l35,D35),-t,th23,l23),rot1y(f5(t,th35,l35,D35),-t,th23,l23,0),th12,l12,D12,D0);
+y=rot2y(rot1x(f5(t,th35,l35,D35),-t,th23,l23),rot1y(f5(t,th35,l35,D35),-t,th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border of(t=beta23*l23,D36*sin(th36)+l36*cos(th36))
+{x=rot2x(rot1x(f6(t,th36,D36,D23),-t,th23,l23),rot1y(f6(t,th36,D36,D23),-t,th23,l23,0),th12,l12,D12,D0);
+y=rot2y(rot1x(f6(t,th36,D36,D23),-t,th23,l23),rot1y(f6(t,th36,D36,D23),-t,th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border og(t=D36*sin(th36)+l36*cos(th36),l36*cos(th36))
+{x=rot2x(rot1x(f7(t,th36,l36,D23),-t,th23,l23),rot1y(f7(t,th36,l36,D23),-t,th23,l23,0),th12,l12,D12,D0);
+y=rot2y(rot1x(f7(t,th36,l36,D23),-t,th23,l23),rot1y(f7(t,th36,l36,D23),-t,th23,l23,0),th12,l12,D12,l0);label=3;};
+
+border oh(t=l36*cos(th36),0)
+{x=rot2x(rot1x(f8(t,th36,D23),-t,th23,l23),rot1y(f8(t,th36,D23),-t,th23,l23,0),th12,l12,D12,D0);
+y=rot2y(rot1x(f8(t,th36,D23),-t,th23,l23),rot1y(f8(t,th36,D23),-t,th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border pc(t=0,l37*cos(th37))
+{x=rot2x(rot2x(f3(t,th37),-t,th24,l24,D24,D12),rot2y(f3(t,th37),-t,th24,l24,D24,0),th12,l12,D12,D0);
+y=rot2y(rot2x(f3(t,th37),-t,th24,l24,D24,D12),rot2y(f3(t,th37),-t,th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+border pd(t=l37*cos(th37),D37*sin(th37)+l37*cos(th37))
+{x=rot2x(rot2x(f4(t,th37,l37),-t,th24,l24,D24,D12),rot2y(f4(t,th37,l37),-t,th24,l24,D24,0),th12,l12,D12,D0);
+y=rot2y(rot2x(f4(t,th37,l37),-t,th24,l24,D24,D12),rot2y(f4(t,th37,l37),-t,th24,l24,D24,0),th12,l12,D12,l0);label=3;};
+
+border pe(t=D37*sin(th37)+l37*cos(th37),beta24*l24)
+{x=rot2x(rot2x(f5(t,th37,l37,D37),-t,th24,l24,D24,D12),rot2y(f5(t,th37,l37,D37),-t,th24,l24,D24,0),th12,l12,D12,D0);
+y=rot2y(rot2x(f5(t,th37,l37,D37),-t,th24,l24,D24,D12),rot2y(f5(t,th37,l37,D37),-t,th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+border pf(t=beta24*l24,D38*sin(th38)+l38*cos(th38))
+{x=rot2x(rot2x(f6(t,th38,D38,D24),-t,th24,l24,D24,D12),rot2y(f6(t,th38,D38,D24),-t,th24,l24,D24,0),th12,l12,D12,D0);
+y=rot2y(rot2x(f6(t,th38,D38,D24),-t,th24,l24,D24,D12),rot2y(f6(t,th38,D38,D24),-t,th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+border pg(t=D38*sin(th38)+l38*cos(th38),l38*cos(th38))
+{x=rot2x(rot2x(f7(t,th38,l38,D24),-t,th24,l24,D24,D12),rot2y(f7(t,th38,l38,D24),-t,th24,l24,D24,0),th12,l12,D12,D0);
+y=rot2y(rot2x(f7(t,th38,l38,D24),-t,th24,l24,D24,D12),rot2y(f7(t,th38,l38,D24),-t,th24,l24,D24,0),th12,l12,D12,l0);label=3;};
+
+border ph(t=l38*cos(th38),0)
+{x=rot2x(rot2x(f8(t,th38,D24),-t,th24,l24,D24,D12),rot2y(f8(t,th38,D24),-t,th24,l24,D24,0),th12,l12,D12,D0);
+y=rot2y(rot2x(f8(t,th38,D24),-t,th24,l24,D24,D12),rot2y(f8(t,th38,D24),-t,th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+//4eme generation
+
+border qc(t=0,l41*cos(th41))
+{x=rot1x(rot1x(rot1x(f3(t,th41),-t,th31,l31),rot1y(f3(t,th41),-t,th31,l31,0),th21,l21),rot1y(rot1x(f3(t,th41),-    t,th31,l31),rot1y(f3(t,th41),-t,th31,l31,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot1x(f3(t,th41),-t,th31,l31),rot1y(f3(t,th41),-t,th31,l31,0),th21,l21),rot1y(rot1x(f3(t,th41),- t,th31,l31),rot1y(f3(t,th41),-t,th31,l31,0),th21,l21,0),th11,l11,l0);label=20;};
+
+border qd(t=l41*cos(th41),D41*sin(th41)+l41*cos(th41))
+{x=rot1x(rot1x(rot1x(f4(t,th41,l41),-t,th31,l31),rot1y(f4(t,th41,l41),-t,th31,l31,0),th21,l21),rot1y(rot1x(f4    (t,th41,l41),-t,th31,l31),rot1y(f4(t,th41,l41),-t,th31,l31,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot1x(f4(t,th41,l41),-t,th31,l31),rot1y(f4(t,th41,l41),-t,th31,l31,0),th21,l21),rot1y(rot1x(f4(t,th41,l41),-t,th31,l31),rot1y(f4(t,th41,l41),-t,th31,l31,0),th21,l21,0),th11,l11,l0);label=1;};
+
+border qe(t=D41*sin(th41)+l41*cos(th41),beta31*l31)
+{x=rot1x(rot1x(rot1x(f5(t,th41,l41,D41),-t,th31,l31),rot1y(f5(t,th41,l41,D41),-t,th31,l31,0),th21,l21),rot1y(rot1x(f5    (t,th41,l41,D41),-t,th31,l31),rot1y(f5(t,th41,l41,D41),-t,th31,l31,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot1x(f5(t,th41,l41,D41),-t,th31,l31),rot1y(f5(t,th41,l41,D41),-t,th31,l31,0),th21,l21),rot1y(rot1x    (f5(t,th41,l41,D41),-t,th31,l31),rot1y(f5(t,th41,l41,D41),-t,th31,l31,0),th21,l21,0),th11,l11,l0);label=20;};
+
+border qf(t=beta31*l31,D42*sin(th42)+l42*cos(th42))
+{x=rot1x(rot1x(rot1x(f6(t,th42,D42,D31),-t,th31,l31),rot1y(f6(t,th42,D42,D31),-    t,th31,l31,0),th21,l21),rot1y(rot1x(f6(t,th42,D42,D31),-t,th31,l31),rot1y(f6(t,th42,D42,D31),-    t,th31,l31,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot1x(f6(t,th42,D42,D31),-t,th31,l31),rot1y(f6(t,th42,D42,D31),-t,th31,l31,0),th21,l21),rot1y(rot1x    (f6(t,th42,D42,D31),-t,th31,l31),rot1y(f6(t,th42,D42,D31),-t,th31,l31,0),th21,l21,0),th11,l11,l0);label=20;};
+
+border qg(t=D42*sin(th42)+l42*cos(th42),l42*cos(th42))
+{x=rot1x(rot1x(rot1x(f7(t,th42,l42,D31),-t,th31,l31),rot1y(f7(t,th42,l42,D31),-t,th31,l31,0),th21,l21),rot1y(rot1x(f7(t,th42,l42,D31),-t,th31,l31),rot1y(f7(t,th42,l42,D31),-t,th31,l31,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot1x(f7(t,th42,l42,D31),-t,th31,l31),rot1y(f7(t,th42,l42,D31),-t,th31,l31,0),th21,l21),rot1y(rot1x(f7(t,th42,l42,D31),-t,th31,l31),rot1y(f7(t,th42,l42,D31),-t,th31,l31,0),th21,l21,0),th11,l11,l0);label=2;};
+
+border qh(t=l42*cos(th42),0)
+{x=rot1x(rot1x(rot1x(f8(t,th42,D31),-t,th31,l31),rot1y(f8(t,th42,D31),-t,th31,l31,0),th21,l21),rot1y(rot1x(f8    (t,th42,D31),-t,th31,l31),rot1y(f8(t,th42,D31),-t,th31,l31,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot1x(f8(t,th42,D31),-t,th31,l31),rot1y(f8(t,th42,D31),-t,th31,l31,0),th21,l21),rot1y(rot1x(f8    (t,th42,D31),-t,th31,l31),rot1y(f8(t,th42,D31),-t,th31,l31,0),th21,l21,0),th11,l11,l0);label=20;};
+
+   
+   
+   
+    //*********************fin Q
+   
+   
+   
+    //*********************debut R
+   
+   
+
+       
+border rc(t=0,l43*cos(th43))
+{x=rot1x(rot1x(rot2x(f3(t,th43),-t,th32,l32,D32,D21),rot2y(f3(t,th43),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f3(t,th43),-    t,th32,l32,D32,D21),rot2y(f3(t,th43),-t,th32,l32,D32,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot2x(f3(t,th43),-t,th32,l32,D32,D21),rot2y(f3(t,th43),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f3    (t,th43),-t,th32,l32,D32,D21),rot2y(f3(t,th43),-t,th32,l32,D32,0),th21,l21,0),th11,l11,l0);label=20;};
+
+   
+border rd(t=l43*cos(th43),D43*sin(th43)+l43*cos(th43))
+{x=rot1x(rot1x(rot2x(f4(t,th43,l43),-t,th32,l32,D32,D21),rot2y(f4(t,th43,l43),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f4(t,th43,l43),-t,th32,l32,D32,D21),rot2y(f4(t,th43,l43),-t,th32,l32,D32,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot2x(f4(t,th43,l43),-t,th32,l32,D32,D21),rot2y(f4(t,th43,l43),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f4    (t,th43,l43),-t,th32,l32,D32,D21),rot2y(f4(t,th43,l43),-t,th32,l32,D32,0),th21,l21,0),th11,l11,l0);label=3;};
+   
+border re(t=D43*sin(th43)+l43*cos(th43),beta32*l32)
+{x=rot1x(rot1x(rot2x(f5(t,th43,l43,D43),-t,th32,l32,D32,D21),rot2y(f5(t,th43,l43,D43),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f5(t,th43,l43,D43),-t,th32,l32,D32,D21),rot2y(f5(t,th43,l43,D43),-t,th32,l32,D32,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot2x(f5(t,th43,l43,D43),-t,th32,l32,D32,D21),rot2y(f5(t,th43,l43,D43),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f5(t,th43,l43,D43),-t,th32,l32,D32,D21),rot2y(f5(t,th43,l43,D43),-t,th32,l32,D32,0),th21,l21,0),th11,l11,l0);label=20;};
+ 
+border rf(t=beta32*l32,D44*sin(th44)+l44*cos(th44))
+{x=rot1x(rot1x(rot2x(f6(t,th44,D44,D32),-t,th32,l32,D32,D21),rot2y(f6(t,th44,D44,D32),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f6(t,th44,D44,D32),-t,th32,l32,D32,D21),rot2y(f6(t,th44,D44,D32),-t,th32,l32,D32,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot2x(f6(t,th44,D44,D32),-t,th32,l32,D32,D21),rot2y(f6(t,th44,D44,D32),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f6(t,th44,D44,D32),-t,th32,l32,D32,D21),rot2y(f6(t,th44,D44,D32),-t,th32,l32,D32,0),th21,l21,0),th11,l11,l0);label=20;};
+       
+border rg(t=D44*sin(th44)+l44*cos(th44),l44*cos(th44))
+{x=rot1x(rot1x(rot2x(f7(t,th44,l44,D32),-t,th32,l32,D32,D21),rot2y(f7(t,th44,l44,D32),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f7(t,th44,l44,D32),-t,th32,l32,D32,D21),rot2y(f7(t,th44,l44,D32),-t,th32,l32,D32,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot2x(f7(t,th44,l44,D32),-t,th32,l32,D32,D21),rot2y(f7(t,th44,l44,D32),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f7(t,th44,l44,D32),-t,th32,l32,D32,D21),rot2y(f7(t,th44,l44,D32),-t,th32,l32,D32,0),th21,l21,0),th11,l11,l0);label=4;};
+     
+border rh(t=l44*cos(th44),0)
+{x=rot1x(rot1x(rot2x(f8(t,th44,D32),-t,th32,l32,D32,D21),rot2y(f8(t,th44,D32),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f8(t,th44,D32),-t,th32,l32,D32,D21),rot2y(f8(t,th44,D32),-t,th32,l32,D32,0),th21,l21,0),th11,l11);
+  y=rot1y(rot1x(rot2x(f8(t,th44,D32),-t,th32,l32,D32,D21),rot2y(f8(t,th44,D32),-t,th32,l32,D32,0),th21,l21),rot1y(rot2x(f8(t,th44,D32),-t,th32,l32,D32,D21),rot2y(f8(t,th44,D32),-t,th32,l32,D32,0),th21,l21,0),th11,l11,l0);label=20;};
+   
+       
+    //*******************Fin R
+   
+//*************************debut S
+   
+border sc(t=0,l45*cos(th45))
+{x=rot1x(rot2x(rot1x(f3(t,th45),-t,th33,l33),rot1y(f3(t,th45),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f3(t,th45),-t,th33,l33),rot1y(f3(t,th45),-t,th33,l33,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot1x(f3(t,th45),-t,th33,l33),rot1y(f3(t,th45),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f3(t,th45),-t,th33,l33),rot1y(f3(t,th45),-t,th33,l33,0),th22,l22,D22,0),th11,l11,l0);label=20;};
+   
+
+border sd(t=l45*cos(th45),D45*sin(th45)+l45*cos(th45))
+{x=rot1x(rot2x(rot1x(f4(t,th45,l45),-t,th33,l33),rot1y(f4(t,th45,l45),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f4(t,th45,l45),-t,th33,l33),rot1y(f4(t,th45,l45),-t,th33,l33,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot1x(f4(t,th45,l45),-t,th33,l33),rot1y(f4(t,th45,l45),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f4(t,th45,l45),-t,th33,l33),rot1y(f4(t,th45,l45),-t,th33,l33,0),th22,l22,D22,0),th11,l11,l0);label=5;};
+
+border se(t=D45*sin(th45)+l45*cos(th45),beta33*l33)
+{x=rot1x(rot2x(rot1x(f5(t,th45,l45,D45),-t,th33,l33),rot1y(f5(t,th45,l45,D45),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f5(t,th45,l45,D45),-t,th33,l33),rot1y(f5(t,th45,l45,D45),-t,th33,l33,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot1x(f5(t,th45,l45,D45),-t,th33,l33),rot1y(f5(t,th45,l45,D45),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f5(t,th45,l45,D45),-t,th33,l33),rot1y(f5(t,th45,l45,D45),-t,th33,l33,0),th22,l22,D22,0),th11,l11,l0);label=20;};
+
+border sf(t=beta33*l33,D46*sin(th46)+l46*cos(th46))
+{x=rot1x(rot2x(rot1x(f6(t,th46,D46,D33),-t,th33,l33),rot1y(f6(t,th46,D46,D33),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f6(t,th46,D46,D33),-t,th33,l33),rot1y(f6(t,th46,D46,D33),-t,th33,l33,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot1x(f6(t,th46,D46,D33),-t,th33,l33),rot1y(f6(t,th46,D46,D33),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f6(t,th46,D46,D33),-t,th33,l33),rot1y(f6(t,th46,D46,D33),-t,th33,l33,0),th22,l22,D22,0),th11,l11,l0);label=20;};
+
+border sg(t=D46*sin(th46)+l46*cos(th46),l46*cos(th46))
+{x=rot1x(rot2x(rot1x(f7(t,th46,l46,D33),-t,th33,l33),rot1y(f7(t,th46,l46,D33),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f7(t,th46,l46,D33),-t,th33,l33),rot1y(f7(t,th46,l46,D33),-t,th33,l33,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot1x(f7(t,th46,l46,D33),-t,th33,l33),rot1y(f7(t,th46,l46,D33),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f7(t,th46,l46,D33),-t,th33,l33),rot1y(f7(t,th46,l46,D33),-t,th33,l33,0),th22,l22,D22,0),th11,l11,l0);label=6;};
+ 
+border sh(t=l46*cos(th46),0)
+{x=rot1x(rot2x(rot1x(f8(t,th46,D33),-t,th33,l33),rot1y(f8(t,th46,D33),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f8(t,th46,D33),-t,th33,l33),rot1y(f8(t,th46,D33),-t,th33,l33,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot1x(f8(t,th46,D33),-t,th33,l33),rot1y(f8(t,th46,D33),-t,th33,l33,0),th22,l22,D22,D11),rot2y(rot1x(f8(t,th46,D33),-t,th33,l33),rot1y(f8(t,th46,D33),-t,th33,l33,0),th22,l22,D22,0),th11,l11,l0);label=20;};
+
+//**********debut T
+
+border tc(t=0,l47*cos(th47))
+{x=rot1x(rot2x(rot2x(f3(t,th47),-t,th34,l34, D34,D22),rot2y(f3(t,th47),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f3(t,th47),-t,th34,l34,D34,D22),rot2y(f3(t,th47),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot2x(f3(t,th47),-t,th34,l34, D34,D22),rot2y(f3(t,th47),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f3(t,th47),-t,th34,l34,D34,D22),rot2y(f3(t,th47),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11,l0);label=20;};
+   
+
+border td(t=l47*cos(th47),D47*sin(th47)+l47*cos(th47))
+{x=rot1x(rot2x(rot2x(f4(t,th47,l47),-t,th34,l34,D34,D22),rot2y(f4(t,th47,l47),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f4(t,th47,l47),-t,th34,l34,D34,D22),rot2y(f4(t,th47,l47),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot2x(f4(t,th47,l47),-t,th34,l34,D34,D22),rot2y(f4(t,th47,l47),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f4(t,th47,l47),-t,th34,l34,D34,D22),rot2y(f4(t,th47,l47),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11,l0);label=7;};
+
+border te(t=D47*sin(th47)+l47*cos(th47),beta34*l34)
+{x=rot1x(rot2x(rot2x(f5(t,th47,l47,D47),-t,th34,l34,D34,D22),rot2y(f5(t,th47,l47,D47),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f5(t,th47,l47,D47),-t,th34,l34,D34,D22),rot2y(f5(t,th47,l47,D47),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot2x(f5(t,th47,l47,D47),-t,th34,l34,D34,D22),rot2y(f5(t,th47,l47,D47),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f5(t,th47,l47,D47),-t,th34,l34,D34,D22),rot2y(f5(t,th47,l47,D47),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11,l0);label=20;};
+
+border tf(t=beta34*l34,D48*sin(th48)+l48*cos(th48))
+{x=rot1x(rot2x(rot2x(f6(t,th48,D48,D34),-t,th34,l34,D34,D22),rot2y(f6(t,th48,D48,D34),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f6(t,th48,D48,D34),-t,th34,l34,D34,D22),rot2y(f6(t,th48,D48,D34),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot2x(f6(t,th48,D48,D34),-t,th34,l34,D34,D22),rot2y(f6(t,th48,D48,D34),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f6(t,th48,D48,D34),-t,th34,l34,D34,D22),rot2y(f6(t,th48,D48,D34),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11,l0);label=20;};
+
+border tg(t=D48*sin(th48)+l48*cos(th48),l48*cos(th48))
+{x=rot1x(rot2x(rot2x(f7(t,th48,l48,D34),-t,th34,l34,D34,D22),rot2y(f7(t,th48,l48,D34),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f7(t,th48,l48,D34),-t,th34,l34,D34,D22),rot2y(f7(t,th48,l48,D34),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot2x(f7(t,th48,l48,D34),-t,th34,l34,D34,D22),rot2y(f7(t,th48,l48,D34),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f7(t,th48,l48,D34),-t,th34,l34,D34,D22),rot2y(f7(t,th48,l48,D34),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11,l0);label=8;};
+ 
+border th(t=l48*cos(th48),0)
+{x=rot1x(rot2x(rot2x(f8(t,th48,D34),-t,th34,l34,D34,D22),rot2y(f8(t,th48,D34),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f8(t,th48,D34),-t,th34,l34,D34,D22),rot2y(f8(t,th48,D34),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11);
+  y=rot1y(rot2x(rot2x(f8(t,th48,D34),-t,th34,l34,D34,D22),rot2y(f8(t,th48,D34),-t,th34,l34,D34,0),th22,l22,D22,D11),rot2y(rot2x(f8(t,th48,D34),-t,th34,l34,D34,D22),rot2y(f8(t,th48,D34),-t,th34,l34,D34,0),th22,l22,D22,0),th11,l11,l0);label=20;};
+
+
+
+//**********************debut U
+
+
+border uc(t=0,l49*cos(th49))
+{x=rot2x(rot1x(rot1x(f3(t,th49),-t,th35,l35),rot1y(f3(t,th49),-t,th35,l35,0),th23,l23),rot1y(rot1x(f3(t,th49),-t,th35,l35),rot1y(f3(t,th49),-t,th35,l35,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot1x(f3(t,th49),-t,th35,l35),rot1y(f3(t,th49),-t,th35,l35,0),th23,l23),rot1y(rot1x(f3(t,th49),-t,th35,l35),rot1y(f3(t,th49),-t,th35,l35,0),th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border ud(t=l49*cos(th49),D49*sin(th49)+l49*cos(th49))
+{x=rot2x(rot1x(rot1x(f4(t,th49,l49),-t,th35,l35),rot1y(f4(t,th49,l49),-t,th35,l35,0),th23,l23),rot1y(rot1x(f4(t,th49,l49),-t,th35,l35),rot1y(f4(t,th49,l49),-t,th35,l35,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot1x(f4(t,th49,l49),-t,th35,l35),rot1y(f4(t,th49,l49),-t,th35,l35,0),th23,l23),rot1y(rot1x(f4(t,th49,l49),-t,th35,l35),rot1y(f4(t,th49,l49),-t,th35,l35,0),th23,l23,0),th12,l12,D12,l0);label=9;};
+ 
+border ue(t=D49*sin(th49)+l49*cos(th49),beta35*l35)
+{x=rot2x(rot1x(rot1x(f5(t,th49,l49,D49),-t,th35,l35),rot1y(f5(t,th49,l49,D49),-t,th35,l35,0),th23,l23),rot1y(rot1x(f5(t,th49,l49,D49),-t,th35,l35),rot1y(f5(t,th49,l49,D49),-t,th35,l35,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot1x(f5(t,th49,l49,D49),-t,th35,l35),rot1y(f5(t,th49,l49,D49),-t,th35,l35,0),th23,l23),rot1y(rot1x(f5(t,th49,l49,D49),-t,th35,l35),rot1y(f5(t,th49,l49,D49),-t,th35,l35,0),th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border uf(t=beta35*l35,D410*sin(th410)+l410*cos(th410))
+{x=rot2x(rot1x(rot1x(f6(t,th410,D410,D35),-t,th35,l35),rot1y(f6(t,th410,D410,D35),-t,th35,l35,0),th23,l23),rot1y(rot1x(f6(t,th410,D410,D35),-t,th35,l35),rot1y(f6(t,th410,D410,D35),-t,th35,l35,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot1x(f6(t,th410,D410,D35),-t,th35,l35),rot1y(f6(t,th410,D410,D35),-t,th35,l35,0),th23,l23),rot1y(rot1x(f6(t,th410,D410,D35),-t,th35,l35),rot1y(f6(t,th410,D410,D35),-t,th35,l35,0),th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border ug(t=D410*sin(th410)+l410*cos(th410),l410*cos(th410))
+{x=rot2x(rot1x(rot1x(f7(t,th410,l410,D35),-t,th35,l35),rot1y(f7(t,th410,l410,D35),-t,th35,l35,0),th23,l23),rot1y(rot1x(f7(t,th410,l410,D35),-t,th35,l35),rot1y(f7(t,th410,l410,D35),-t,th35,l35,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot1x(f7(t,th410,l410,D35),-t,th35,l35),rot1y(f7(t,th410,l410,D35),-t,th35,l35,0),th23,l23),rot1y(rot1x(f7(t,th410,l410,D35),-t,th35,l35),rot1y(f7(t,th410,l410,D35),-t,th35,l35,0),th23,l23,0),th12,l12,D12,l0);label=10;};
+
+border uh(t=l410*cos(th410),0)
+{x=rot2x(rot1x(rot1x(f8(t,th410,D35),-t,th35,l35),rot1y(f8(t,th410,D35),-t,th35,l35,0),th23,l23),rot1y(rot1x(f8(t,th410,D35),-t,th35,l35),rot1y(f8(t,th410,D35),-t,th35,l35,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot1x(f8(t,th410,D35),-t,th35,l35),rot1y(f8(t,th410,D35),-t,th35,l35,0),th23,l23),rot1y(rot1x(f8(t,th410,D35),-t,th35,l35),rot1y(f8(t,th410,D35),-t,th35,l35,0),th23,l23,0),th12,l12,D12,l0);label=20;};
+
+
+
+//**********************debut V
+
+
+border vc(t=0,l411*cos(th411))
+{x=rot2x(rot1x(rot2x(f3(t,th411),-t,th36,l36,D36,D23),rot2y(f3(t,th411),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f3(t,th411),-t,th36,l36,D36,D23),rot2y(f3(t,th411),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot2x(f3(t,th411),-t,th36,l36,D36,D23),rot2y(f3(t,th411),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f3(t,th411),-t,th36,l36,D36,D23),rot2y(f3(t,th411),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border vd(t=l411*cos(th411),D411*sin(th411)+l411*cos(th411))
+{x=rot2x(rot1x(rot2x(f4(t,th411,l411),-t,th36,l36,D36,D23),rot2y(f4(t,th411,l411),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f4(t,th411,l411),-t,th36,l36,D36,D23),rot2y(f4(t,th411,l411),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot2x(f4(t,th411,l411),-t,th36,l36,D36,D23),rot2y(f4(t,th411,l411),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f4(t,th411,l411),-t,th36,l36,D36,D23),rot2y(f4(t,th411,l411),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,l0);label=11;};
+ 
+border ve(t=D411*sin(th411)+l411*cos(th411),beta36*l36)
+{x=rot2x(rot1x(rot2x(f5(t,th411,l411,D411),-t,th36,l36,D36,D23),rot2y(f5(t,th411,l411,D411),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f5(t,th411,l411,D411),-t,th36,l36,D36,D23),rot2y(f5(t,th411,l411,D411),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot2x(f5(t,th411,l411,D411),-t,th36,l36,D36,D23),rot2y(f5(t,th411,l411,D411),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f5(t,th411,l411,D411),-t,th36,l36,D36,D23),rot2y(f5(t,th411,l411,D411),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border vf(t=beta36*l36,D412*sin(th412)+l412*cos(th412))
+{x=rot2x(rot1x(rot2x(f6(t,th412,D412,D36),-t,th36,l36,D36,D23),rot2y(f6(t,th412,D412,D36),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f6(t,th412,D412,D36),-t,th36,l36,D36,D23),rot2y(f6(t,th412,D412,D36),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot2x(f6(t,th412,D412,D36),-t,th36,l36,D36,D23),rot2y(f6(t,th412,D412,D36),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f6(t,th412,D412,D36),-t,th36,l36,D36,D23),rot2y(f6(t,th412,D412,D36),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,l0);label=20;};
+
+border vg(t=D412*sin(th412)+l412*cos(th412),l412*cos(th412))
+{x=rot2x(rot1x(rot2x(f7(t,th412,l412,D36),-t,th36,l36,D36,D23),rot2y(f7(t,th412,l412,D36),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f7(t,th412,l412,D36),-t,th36,l36,D36,D23),rot2y(f7(t,th412,l412,D36),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot2x(f7(t,th412,l412,D36),-t,th36,l36,D36,D23),rot2y(f7(t,th412,l412,D36),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f7(t,th412,l412,D36),-t,th36,l36,D36,D23),rot2y(f7(t,th412,l412,D36),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,l0);label=12;};
+
+border vh(t=l412*cos(th412),0)
+{x=rot2x(rot1x(rot2x(f8(t,th412,D36),-t,th36,l36,D36,D23),rot2y(f8(t,th412,D36),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f8(t,th412,D36),-t,th36,l36,D36,D23),rot2y(f8(t,th412,D36),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,D0);
+  y=rot2y(rot1x(rot2x(f8(t,th412,D36),-t,th36,l36,D36,D23),rot2y(f8(t,th412,D36),-t,th36,l36,D36,0),th23,l23),rot1y(rot2x(f8(t,th412,D36),-t,th36,l36,D36,D23),rot2y(f8(t,th412,D36),-t,th36,l36,D36,0),th23,l23,0),th12,l12,D12,l0);label=20;};
+
+
+
+
+
+//**********************debut W
+
+
+border wc(t=0,l413*cos(th413))
+{x=rot2x(rot2x(rot1x(f3(t,th413),-t,th37,l37),rot1y(f3(t,th413),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f3(t,th413),-t,th37,l37),rot1y(f3(t,th413),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot1x(f3(t,th413),-t,th37,l37),rot1y(f3(t,th413),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f3(t,th413),-t,th37,l37),rot1y(f3(t,th413),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+border wd(t=l413*cos(th413),D413*sin(th413)+l413*cos(th413))
+{x=rot2x(rot2x(rot1x(f4(t,th413,l413),-t,th37,l37),rot1y(f4(t,th413,l413),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f4(t,th413,l413),-t,th37,l37),rot1y(f4(t,th413,l413),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot1x(f4(t,th413,l413),-t,th37,l37),rot1y(f4(t,th413,l413),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f4(t,th413,l413),-t,th37,l37),rot1y(f4(t,th413,l413),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,l0);label=13;};
+ 
+border we(t=D413*sin(th413)+l413*cos(th413),beta37*l37)
+{x=rot2x(rot2x(rot1x(f5(t,th413,l413,D413),-t,th37,l37),rot1y(f5(t,th413,l413,D413),-t,th37,l37,0),th24,l24, D24, D12),rot2y(rot1x(f5(t,th413,l413,D413),-t,th37,l37),rot1y(f5(t,th413,l413,D413),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot1x(f5(t,th413,l413,D413),-t,th37,l37),rot1y(f5(t,th413,l413,D413),-t,th37,l37,0),th24,l24, D24, D12),rot2y(rot1x(f5(t,th413,l413,D413),-t,th37,l37),rot1y(f5(t,th413,l413,D413),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+border wf(t=beta37*l37,D414*sin(th414)+l414*cos(th414))
+{x=rot2x(rot2x(rot1x(f6(t,th414,D414,D37),-t,th37,l37),rot1y(f6(t,th414,D414,D37),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f6(t,th414,D414,D37),-t,th37,l37),rot1y(f6(t,th414,D414,D37),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot1x(f6(t,th414,D414,D37),-t,th37,l37),rot1y(f6(t,th414,D414,D37),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f6(t,th414,D414,D37),-t,th37,l37),rot1y(f6(t,th414,D414,D37),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+border wg(t=D414*sin(th414)+l414*cos(th414),l414*cos(th414))
+{x=rot2x(rot2x(rot1x(f7(t,th414,l414,D37),-t,th37,l37),rot1y(f7(t,th414,l414,D37),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f7(t,th414,l414,D37),-t,th37,l37),rot1y(f7(t,th414,l414,D37),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot1x(f7(t,th414,l414,D37),-t,th37,l37),rot1y(f7(t,th414,l414,D37),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f7(t,th414,l414,D37),-t,th37,l37),rot1y(f7(t,th414,l414,D37),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,l0);label=14;};
+
+border wh(t=l414*cos(th414),0)
+{x=rot2x(rot2x(rot1x(f8(t,th414,D37),-t,th37,l37),rot1y(f8(t,th414,D37),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f8(t,th414,D37),-t,th37,l37),rot1y(f8(t,th414,D37),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot1x(f8(t,th414,D37),-t,th37,l37),rot1y(f8(t,th414,D37),-t,th37,l37,0),th24,l24,D24,D12),rot2y(rot1x(f8(t,th414,D37),-t,th37,l37),rot1y(f8(t,th414,D37),-t,th37,l37,0),th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+
+//**********************debut X
+
+
+border xc(t=0,l415*cos(th415))
+{x=rot2x(rot2x(rot2x(f3(t,th415),-t,th38,l38,D38,D24),rot2y(f3(t,th415),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f3(t,th415),-t,th38,l38,D38,D24),rot2y(f3(t,th415),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot2x(f3(t,th415),-t,th38,l38,D38,D24),rot2y(f3(t,th415),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f3(t,th415),-t,th38,l38,D38,D24),rot2y(f3(t,th415),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+border xd(t=l415*cos(th415),D415*sin(th415)+l415*cos(th415))
+{x=rot2x(rot2x(rot2x(f4(t,th415,l415),-t,th38,l38,D38,D24),rot2y(f4(t,th415,l415),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f4(t,th415,l415),-t,th38,l38,D38,D24),rot2y(f4(t,th415,l415),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot2x(f4(t,th415,l415),-t,th38,l38,D38,D24),rot2y(f4(t,th415,l415),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f4(t,th415,l415),-t,th38,l38,D38,D24),rot2y(f4(t,th415,l415),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,l0);label=15;};
+ 
+border xe(t=D415*sin(th415)+l415*cos(th415),beta38*l38)
+{x=rot2x(rot2x(rot2x(f5(t,th415,l415,D415),-t,th38,l38,D38,D24),rot2y(f5(t,th415,l415,D415),-t,th38,l38,D38,0),th24,l24, D24, D12),rot2y(rot2x(f5(t,th415,l415,D415),-t,th38,l38,D38,D24),rot2y(f5(t,th415,l415,D415),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot2x(f5(t,th415,l415,D415),-t,th38,l38,D38,D24),rot2y(f5(t,th415,l415,D415),-t,th38,l38,D38,0),th24,l24, D24, D12),rot2y(rot2x(f5(t,th415,l415,D415),-t,th38,l38,D38,D24),rot2y(f5(t,th415,l415,D415),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+border xf(t=beta38*l38,D416*sin(th416)+l416*cos(th416))
+{x=rot2x(rot2x(rot2x(f6(t,th416,D416,D38),-t,th38,l38,D38,D24),rot2y(f6(t,th416,D416,D38),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f6(t,th416,D416,D38),-t,th38,l38,D38,D24),rot2y(f6(t,th416,D416,D38),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot2x(f6(t,th416,D416,D38),-t,th38,l38,D38,D24),rot2y(f6(t,th416,D416,D38),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f6(t,th416,D416,D38),-t,th38,l38,D38,D24),rot2y(f6(t,th416,D416,D38),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+border xg(t=D416*sin(th416)+l416*cos(th416),l416*cos(th416))
+{x=rot2x(rot2x(rot2x(f7(t,th416,l416,D38),-t,th38,l38,D38,D24),rot2y(f7(t,th416,l416,D38),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f7(t,th416,l416,D38),-t,th38,l38,D38,D24),rot2y(f7(t,th416,l416,D38),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot2x(f7(t,th416,l416,D38),-t,th38,l38,D38,D24),rot2y(f7(t,th416,l416,D38),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f7(t,th416,l416,D38),-t,th38,l38,D38,D24),rot2y(f7(t,th416,l416,D38),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,l0);label=16;};
+
+border xh(t=l416*cos(th416),0)
+{x=rot2x(rot2x(rot2x(f8(t,th416,D38),-t,th38,l38,D38,D24),rot2y(f8(t,th416,D37),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f8(t,th416,D38),-t,th38,l38,D38,D24),rot2y(f8(t,th416,D38),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,D0);
+  y=rot2y(rot2x(rot2x(f8(t,th416,D38),-t,th38,l38,D38,D24),rot2y(f8(t,th416,D37),-t,th38,l38,D38,0),th24,l24,D24,D12),rot2y(rot2x(f8(t,th416,D38),-t,th38,l38,D38,D24),rot2y(f8(t,th416,D38),-t,th38,l38,D38,0),th24,l24,D24,0),th12,l12,D12,l0);label=20;};
+
+
+
+
+//CAS 0 GENERATION !!
+
+
+
+
+
+//CAS 1 GENERATION !!
+
+/*
+mesh Th=buildmesh (a(D0*DM)+b(l0*DM)+c(l11*DM)
+          +d(D11*DM)
+          +e(l11*DM)+f(l12*DM)
+          +g(D12*DM)
+          +h(l12*DM)+j(l0*DM),flags=3);
+
+string meshfile = "bifurcation_1g.mesh";
+*/
+
+//CAS 2 GENERATIONS !!
+// mesh Th=buildmesh (a(D0*DM)+b(l0*DM)+c(l11*DM)
+// +kc(l21*DM)+kd(D21*DM)
+// +ke(l21*DM)+kf(l22*DM)
+// +kg(D22*DM)+kh(l22*DM)
+// +e(l11*DM)+f(l12*DM)+
+// lc(l23*DM)+ld(D23*DM)
+// +le(l23*DM)+lf(l24*DM)
+// +lg(D24*DM)+lh(l24*DM)
+// +h(l12*DM)+j(l0*DM));
+
+//string meshfile = "bifurcation_2g.mesh";
+
+
+//CAS 3 GENERATIONS !!
+//mesh Th=buildmesh (a(D0*DM)+b(l0*DM)+c(l11*DM)
+//+kc(l21*DM)
+// +mc(l31*DM)+md(D31*DM)+me(l31*DM)
+// +mf(l32*DM)+mg(D32*DM)+mh(l32*DM)
+// +ke(l21*DM)+kf(l22*DM)
+// +nc(l33*DM)+nd(D33*DM)+ne(l33*DM)
+// +nf(l34*DM)+ng(D34*DM)+nh(l34*DM)
+// +kh(l22*DM)
+// +e(l11*DM)+f(l12*DM)+
+// lc(l23*DM)
+// +oc(l35*DM)+od(D35*DM)+oe(l35*DM)
+// +of(l36*DM)+og(D36*DM)+oh(l36*DM)
+// +le(l23*DM)+lf(l24*DM)
+// +pc(l37*DM)+pd(D37*DM)+pe(l37*DM)
+// +pf(l38*DM)+pg(D38*DM)+ph(l38*DM)
+// +lh(l24*DM)
+// +h(l12*DM)+j(l0*DM));
+
+// string meshfile = "bifurcation_3g.mesh";
+
+// CAS 4 GENERATIONS !! -- euh pas encore ;-)
+
+
+mesh Th=buildmesh (
+          a(D0*DM)
+          +b(l0*DM)
+          +c(l11*DM)
+         
+          +kc(l21*DM)
+          +mc(l31*DM)
+         
+          +qc(l41*DM)
+          +qd(D41*DM)
+          +qe(l41*DM)
+          +qf(l42*DM)
+          +qg(D42*DM)
+          +qh(l42*DM)
+
+          +me(l31*DM)
+          +mf(l32*DM)
+         
+
+         
+          +rc(l43*DM)
+          +rd(D43*DM)
+          +re(l43*DM)
+          +rf(l44*DM)
+          +rg(D44*DM)
+          +rh(l44*DM)
+         
+         
+          +mh(l32*DM)
+          +ke(l21*DM)
+          +kf(l22*DM)
+          +nc(l33*DM)
+          //           +nd(D33*DM)
+
+
+          +sc(l45*DM)
+          +sd(D45*DM)
+          +se(l45*DM)
+          +sf(l46*DM)
+          +sg(D46*DM)
+          +sh(l46*DM)
+
+          +ne(l33*DM)
+          +nf(l34*DM)
+         
+          +tc(l47*DM)
+          +td(D47*DM)
+          +te(l47*DM)
+          +tf(l48*DM)
+          +tg(D48*DM)
+          +th(l48*DM)
+
+
+          +nh(l34*DM)
+
+          +kh(l22*DM)
+          +e(l11*DM)
+          +f(l12*DM)
+ 
+          +lc(l23*DM)
+          +oc(l35*DM)
+         
+          +uc(l49*DM)
+          +ud(D49*DM)
+          +ue(l49*DM)
+          +uf(l410*DM)
+          +ug(D410*DM)
+          +uh(l410*DM)
+
+
+
+          +oe(l35*DM)
+          +of(l36*DM)
+         
+
+          +vc(l411*DM)
+          +vd(D411*DM)
+          +ve(l411*DM)
+          +vf(l412*DM)
+          +vg(D412*DM)
+          +vh(l412*DM)
+
+
+
+
+          +oh(l36*DM)
+          +le(l23*DM)
+          +lf(l24*DM)
+          +pc(l37*DM)
+         
+          +wc(l413*DM)
+          +wd(D413*DM)
+          +we(l413*DM)
+          +wf(l414*DM)
+          +wg(D414*DM)
+          +wh(l414*DM)
+
+
+
+
+
+          +pe(l37*DM)
+          +pf(l38*DM)
+       
+          +xc(l415*DM)
+          +xd(D415*DM)
+          +xe(l415*DM)
+          +xf(l416*DM)
+          +xg(D416*DM)
+          +xh(l416*DM)
+
+
+
+
+          +ph(l38*DM)
+          +lh(l24*DM)
+          +h(l12*DM)
+          +j(l0*DM));
+Th= adaptmesh (Th,1./500.,IsMetric=1,nbvx=200000);
+
+savevtk("Domaine_bifurcation_4g.vtu",Th, [0,0,0],
+                  order = fforder2, dataname ="U ", bin = true )
+;
+
+plot(Th,wait=1);  // pour afficher maillage
+// sauvegarde du maillage en format Medit
+savemesh(Th,"bifurcation_4g.mesh");
+
+load "iovtk"
+// load "UMFPACK64"
+//load "msh3"
+load "medit"
+
+int nPoints  = 10000;
+int Tolerance = 1.e-6;
+real dt = 1e-6; // pas de temps  
+
+// plot(Th); exit(0);
+
+fespace Vh(Th,P2);   // Espace des vitesses d'éléments finis sur un maillage donné (plus précis par P2 :quadratiques)
+fespace Mh(Th,P1);   // Espace des pressions d'éléments finis sur un maillage donné (moins précis par P1 : linéaires)
+
+Vh u1,u2, u1p,u2p ,v1,v2;    // Declaration des composantes des vitesses et des fonctions tests
+Mh p,pp,q;                 // Declaration de la pression et de la fonction test q 
+
+
+real  Reynolds = 500;             // Reynolds 
+real  nu = 1./Reynolds;       // Viscosite dynamique 
+real  U0 = -1. ;               // Valeur imposée sur le bord haut du carrée     
+
+
+// Nombre d'iteration maximale et declaration des erreurs 
+
+real Err, errP,errU;
+
+real R1 = 1.;
+
+// Boucle en temps pour l'algorithme de résolution Euler (ordre 1 en temps)
+
+real t ;
+
+u1 = 0.; u2=0.; p =0.;
+
+ofstream gnu("Erreur_Cavite2D_Reynolds="+Reynolds+".txt");
+
+for(int i=0;i<=nPoints ;i++)
+{ 
+    t = i*dt;
+    
+    u1p =u1; u2p =u2; pp=p;
+    
+    real Bordu = int1d(Th,4) (R1*(u1p*N.x + u2p * N.y));
+
+    solve NS([u1,u2,p],[v1,v2,q]) =
+    
+     int2d(Th)(  (u1*v1  + u2*v2)/dt)   
+   - int2d(Th)(  (u1p*v1 + u2p*v2)/dt)   
+
+   + int2d(Th)( nu*(2*dx(u1)*dx(v1) + 2*dy(u2)*dy(v2)  +
+                    dy(u1)*dy(v1)   + dx(u2)*dx(v2)  +
+                    dx(u2)*dy(v1)   + dy(u1)*dx(v2))
+              )
+
+   + int2d(Th)(   ( u1p*dx(u1) + u2p*dy(u1) )* v1 
+                 +( u1p*dx(u2) + u2p*dy(u2) )* v2 )
+
+
+   - int2d(Th)(p*(dx(v1)+ dy(v2)) + q*(dx(u1)+ dy(u2)) - 1e-7*p*q  )
+   + int1d(Th,4)(Bordu * (v1*N.x + v2*N.y))
+
+
+   + on(0, u2=U0, u1=0) 
+   + on(20, u2=0,u1=0)
+   ;  
+
+    errU = sqrt(int2d(Th)(square(u1-u1p)+ square(u2-u2p))) ;
+    errP = sqrt(int2d(Th)(square(p-pp))) ;
+    Err = sqrt(errP^2+errU^2);
+            
+// Stockage dans un tableau des valeurs des erreurs
+gnu << t
+            << "       " << dt
+            << "       " << Reynolds
+            << "       " << Err
+            << "       " << errU
+            << "       " << errP
+            << endl;
+
+gnu.flush;
+    
+   
+cout << " Affichage ****  iter " << i <<  " |  Pas de temps === " << dt <<  "  | Reynolds === " << Reynolds <<     "  |  ErrTotal  = " << Err <<  "  | ErrU =   " << errU << " | ErrP =   " << errP << endl;
+
+// Sauvegarde de la solution toute les 10 pas de temps afin de ne pas remplir le disque par des fichiers vtu 
+   
+    if(i%10 ==0){
+    savevtk("Sol_Cavite2D_Reynolds="+Reynolds+"_"+i+".vtu", Th, p, [u1,u2,0],
+            order = fforder2, dataname ="Pression Vitesse", bin = true );
+    }
+
+// Test d'arret des que l'erreur est < a une tolerance donneée:
+
+ if(Err < Tolerance){
+cout << " ****************** La convergnce est atteinte et donc  on arrete le calcul a Tfinle ==  **************** " << t << endl;        
+
+savevtk("SolFinale_Cavite2D_Reynolds="+Reynolds+".vtu",Th, p, [u1,u2,0],
+            order = fforder2, dataname ="P V", bin = true ); 
+break; 
+}    
+}
